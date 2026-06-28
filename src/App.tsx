@@ -613,7 +613,14 @@ Please call **000** for emergency services immediately. If you have no symptoms,
       });
 
       if (!response.ok) {
-        throw new Error('Server responded with an error');
+        let errMsg = 'Could not contact the Care Coach. Please check your network and ensure your GEMINI_API_KEY is configured in Settings > Secrets.';
+        try {
+          const errData = await response.json();
+          if (errData && errData.error) {
+            errMsg = errData.error;
+          }
+        } catch (_) {}
+        throw new Error(errMsg);
       }
 
       const data = await response.json();
@@ -628,7 +635,7 @@ Please call **000** for emergency services immediately. If you have no symptoms,
       setChatMessages(prev => [...prev, assistantMessage]);
     } catch (err: any) {
       console.error(err);
-      setChatError('Could not contact the Care Coach. Please check your network and ensure your GEMINI_API_KEY is configured in Settings > Secrets.');
+      setChatError(err.message || 'Could not contact the Care Coach. Please check your network and ensure your GEMINI_API_KEY is configured in Settings > Secrets.');
     } finally {
       setIsChatLoading(false);
     }

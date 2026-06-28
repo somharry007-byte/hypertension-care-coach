@@ -36,6 +36,23 @@ async function startServer() {
         return res.status(400).json({ error: "Message is required" });
       }
 
+      // Check for GEMINI_API_KEY presence
+      const activeApiKey = process.env.GEMINI_API_KEY || apiKey;
+      if (!activeApiKey) {
+        return res.status(400).json({ 
+          error: "GEMINI_API_KEY is not configured. Please add your GEMINI_API_KEY as an Environment Variable in your settings and restart the server." 
+        });
+      }
+
+      const activeAi = new GoogleGenAI({
+        apiKey: activeApiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          }
+        }
+      });
+
       const systemInstruction = `You are a warm, empathetic, respectful, and encouraging Hypertension Care Coach designed to support adults diagnosed with hypertension in understanding and managing their condition.
 
 Your role is to provide clear, evidence-based education about hypertension and support users in self-managing their condition.
@@ -150,7 +167,7 @@ Keep your tone plain, concise, encouraging, and easy to understand for general a
         while (attempts > 0) {
           try {
             console.log(`Attempting generation with model ${modelName} (${attempts} attempts left)...`);
-            response = await ai.models.generateContent({
+            response = await activeAi.models.generateContent({
               model: modelName,
               contents: contents,
               config: {
