@@ -1,0 +1,6 @@
+{
+  "name": "Hypertension Care Coach",
+  "description": "An evidence-based self-management companion for understanding hypertension, tracking blood pressure readings, and setting healthy lifestyle habits according to the National Heart Foundation of Australia guidelines.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
